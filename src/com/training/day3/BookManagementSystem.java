@@ -56,3 +56,68 @@ public class BookManagementSystem {
         scanner.close();
     }
 }
+
+
+/*
+Output:
+
+Library Management System
+1. Add Book
+2. Replace Book
+3. Display Books
+4. Exit
+Enter your choice: 1
+Enter Book ID: 123
+Enter Title: harry
+Enter Author: potter
+Books added successfully
+
+Library Management System
+1. Add Book
+2. Replace Book
+3. Display Books
+4. Exit
+Enter your choice: 1
+Enter Book ID: 345
+Enter Title: potter
+Enter Author: hatty
+Books added successfully
+
+Library Management System
+1. Add Book
+2. Replace Book
+3. Display Books
+4. Exit
+Enter your choice: 3
+Books in the library:
+BookID: 123, Title: harry, Author: potter, Available: Yes
+BookID: 345, Title: potter, Author: hatty, Available: Yes
+
+Library Management System
+1. Add Book
+2. Replace Book
+3. Display Books
+4. Exit
+Enter your choice: 2
+Enter Book ID to replace: 345
+Enter new Title: demon
+Enter new Author: king
+Book replaced successfully!
+
+Library Management System
+1. Add Book
+2. Replace Book
+3. Display Books
+4. Exit
+Enter your choice: 3
+Books in the library:
+BookID: 123, Title: harry, Author: potter, Available: Yes
+BookID: 345, Title: potter, Author: hatty, Available: Yes
+
+Library Management System
+1. Add Book
+2. Replace Book
+3. Display Books
+4. Exit
+Enter your choice:
+ */
