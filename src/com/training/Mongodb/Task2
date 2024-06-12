@@ -1,0 +1,162 @@
+1. Find all the topics and tasks which are thought in the month of October :
+
+
+zenclassprogram> db.topics.find({ date: { $gte: new Date("2020-10-01"), $lte: new Date("2020-10-31") } }).pretty()
+[
+  {
+    _id: ObjectId('6669552ea1f1892168978208'),
+    topic_id: 1,
+    topic_name: 'JavaScript',
+    date: ISODate('2020-10-10T00:00:00.000Z')
+  },
+  {
+    _id: ObjectId('6669552ea1f1892168978209'),
+    topic_id: 2,
+    topic_name: 'Python',
+    date: ISODate('2020-10-20T00:00:00.000Z')
+  }
+]
+
+zenclassprogram> db.tasks.find({ date: { $gte: new Date("2020-10-01"), $lte: new Date("2020-10-31") } }).pretty()
+[
+  {
+    _id: ObjectId('6669552ea1f189216897820a'),
+    task_id: 1,
+    task_name: 'JS Task',
+    date: ISODate('2020-10-11T00:00:00.000Z'),
+    user_id: 1,
+    submitted: false
+  },
+  {
+    _id: ObjectId('6669552ea1f189216897820b'),
+    task_id: 2,
+    task_name: 'Python Task',
+    date: ISODate('2020-10-21T00:00:00.000Z'),
+    user_id: 2,
+    submitted: true
+  }
+]
+
+
+2.  Find all the company drives which appeared between 15 oct-2020 and 31-oct-2020:
+
+zenclassprogram> db.company_drives.find({ date: { $gte: new Date("2020-10-15"), $lte: new Date("2020-10-31") } }).pretty()
+[
+  {
+    _id: ObjectId('6669552ea1f189216897820c'),
+    drive_id: 1,
+    company_name: 'Google',
+    date: ISODate('2020-10-15T00:00:00.000Z'),
+    student_appeared: [ 1, 2 ]
+  },
+  {
+    _id: ObjectId('6669552ea1f189216897820d'),
+    drive_id: 2,
+    company_name: 'Microsoft',
+    date: ISODate('2020-10-25T00:00:00.000Z'),
+    student_appeared: [ 2 ]
+  }
+]
+
+
+3. Find all the company drives and students who are appeared for the placement :
+
+zenclassprogram> db.company_drives.aggregate([
+...     {
+...         $lookup: {
+...             from: "users",
+...             localField: "student_appeared",
+...             foreignField: "user_id",
+...             as: "students"
+...         }
+...     }
+... ]).pretty()
+[
+  {
+    _id: ObjectId('6669552ea1f189216897820c'),
+    drive_id: 1,
+    company_name: 'Google',
+    date: ISODate('2020-10-15T00:00:00.000Z'),
+    student_appeared: [ 1, 2 ],
+    students: [
+      {
+        _id: ObjectId('6669552ea1f1892168978202'),
+        user_id: 1,
+        name: 'Alice',
+        problems_solved: 50
+      },
+      {
+        _id: ObjectId('6669552ea1f1892168978203'),
+        user_id: 2,
+        name: 'Bob',
+        problems_solved: 30
+      }
+    ]
+  },
+  {
+    _id: ObjectId('6669552ea1f189216897820d'),
+    drive_id: 2,
+    company_name: 'Microsoft',
+    date: ISODate('2020-10-25T00:00:00.000Z'),
+    student_appeared: [ 2 ],
+    students: [
+      {
+        _id: ObjectId('6669552ea1f1892168978203'),
+        user_id: 2,
+        name: 'Bob',
+        problems_solved: 30
+      }
+    ]
+  }
+]
+
+
+4. Find the number of problems solved by the user in codekata:
+
+zenclassprogram> db.codekata.find({}, { user_id: 1, problems_solved: 1, _id: 0 }).pretty()
+[
+  { user_id: 1, problems_solved: 50 },
+  { user_id: 2, problems_solved: 30 }
+]
+
+
+5. Find all the mentors with who has the mentee's count more than 15 :
+
+zenclassprogram> db.mentors.find({ mentee_count: { $gt: 15 } }).pretty()
+[
+  {
+    _id: ObjectId('66695563a1f189216897820e'),
+    mentor_id: 1,
+    name: 'John',
+    mentee_count: 20
+  }
+]
+
+
+6. Find the number of users who are absent and task is not submitted  between 15 oct-2020 and 31-oct-2020:
+
+zenclassprogram> db.attendance.aggregate([
+...     {
+...         $match: {
+...             date: { $gte: new Date("2020-10-15"), $lte: new Date("2020-10-31") },
+...             status: "absent"
+...         }
+...     },
+...     {
+...         $lookup: {
+...             from: "tasks",
+...             localField: "user_id",
+...             foreignField: "user_id",
+...             as: "task_info"
+...         }
+...     },
+...     {
+...         $match: {
+...             "task_info.date": { $gte: new Date("2020-10-15"), $lte: new Date("2020-10-31") },
+...             "task_info.submitted": false
+...         }
+...     },
+...     {
+...         $count: "absent_and_not_submitted"
+...     }
+... ])
